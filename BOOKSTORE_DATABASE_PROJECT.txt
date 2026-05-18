@@ -1,0 +1,507 @@
+                                                                                BOOKSTORE DATA BASE PROJECT
+                                                                             ---------------------------------
+
+CREATE DATABASE IF NOT EXISTS bookstore_db;
+
+USE bookstore_db;
+
+-- 1. Authors
+CREATE TABLE Authors (
+    author_id INT AUTO_INCREMENT PRIMARY KEY,
+    author_name VARCHAR(100) NOT NULL,
+    bio TEXT
+);
+
+-- 2. Genres
+CREATE TABLE Genres (
+    genre_id INT AUTO_INCREMENT PRIMARY KEY,
+    genre_name VARCHAR(50) NOT NULL
+);
+
+-- 3. Customers
+CREATE TABLE Customers (
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    city VARCHAR(50),
+    join_date DATE
+);
+
+-- 4. Books
+CREATE TABLE Books (
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(150),
+    price DECIMAL(10,2),
+    stock_quantity INT,
+    author_id INT,
+    genre_id INT,
+    
+    FOREIGN KEY (author_id) REFERENCES Authors(author_id),
+    FOREIGN KEY (genre_id) REFERENCES Genres(genre_id)
+);
+
+-- 5. Orders
+CREATE TABLE Orders (
+    order_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_date DATE,
+    customer_id INT,
+    
+    FOREIGN KEY (customer_id) REFERENCES Customers(customer_id)
+);
+
+-- 6. Order_Details
+CREATE TABLE Order_Details (
+    detail_id INT AUTO_INCREMENT PRIMARY KEY,
+    order_id INT,
+    book_id INT,
+    quantity_ordered INT,
+    price_at_time_of_order DECIMAL(10,2),
+    
+    FOREIGN KEY (order_id) REFERENCES Orders(order_id),
+    FOREIGN KEY (book_id) REFERENCES Books(book_id)
+);
+
+-- Insert Authors
+INSERT INTO Authors (author_name, bio) VALUES
+('Chetan Bhagat', 'Indian author known for 5 Point Someone.'),
+('Arundhati Roy', 'Winner of the Man Booker Prize.'),
+('R.K. Narayan', 'Creator of Malgudi Days.'),
+('Amish Tripathi', 'Known for the Shiva Trilogy.');
+
+-- Insert Genres
+INSERT INTO Genres (genre_name) VALUES
+('Fiction'),
+('Mythology'),
+('History'),
+('Romance');
+
+-- Insert Books
+INSERT INTO Books
+(title, price, stock_quantity, author_id, genre_id)
+VALUES
+('Five Point Someone', 250.00, 50, 1, 1),
+('2 States', 300.00, 40, 1, 4),
+('The God of Small Things', 450.00, 20, 2, 1),
+('Malgudi Days', 200.00, 100, 3, 1),
+('The Immortals of Meluha', 399.00, 60, 4, 2);
+
+-- Insert Customers
+INSERT INTO Customers
+(name, email, city, join_date)
+VALUES
+('Aarav Sharma', 'aarav@gmail.com', 'Mumbai', '2023-01-10'),
+('Diya Patel', 'diya.p@yahoo.com', 'Ahmedabad', '2023-02-15'),
+('Vihaan Reddy', 'vihaan.r@outlook.com', 'Hyderabad', '2023-03-20'),
+('Ananya Gupta', 'ananya.g@gmail.com', 'Delhi', '2023-04-05');
+
+-- Insert Orders
+INSERT INTO Orders
+(order_date, customer_id)
+VALUES
+('2023-05-01', 1),
+('2023-05-03', 2),
+('2023-05-05', 1),
+('2023-06-01', 3);
+
+-- Insert Order_Details
+INSERT INTO Order_Details
+(order_id, book_id, quantity_ordered, price_at_time_of_order)
+VALUES
+(1, 1, 1, 250.00),
+(1, 4, 2, 200.00),
+(2, 5, 1, 399.00),
+(3, 2, 1, 300.00),
+(4, 3, 1, 450.00);
+
+-- Verify Data
+
+SELECT * FROM Authors;
++-----------+----------------+------------------------------------------+
+| author_id | author_name    | bio                                      |
++-----------+----------------+------------------------------------------+
+|         1 | Chetan Bhagat  | Indian author known for 5 Point Someone. |
+|         2 | Arundhati Roy  | Winner of the Man Booker Prize.          |
+|         3 | R.K. Narayan   | Creator of Malgudi Days.                 |
+|         4 | Amish Tripathi | Known for the Shiva Trilogy.             |
++-----------+----------------+------------------------------------------+ 
+
+SELECT * FROM Genres;
++----------+------------+
+| genre_id | genre_name |
++----------+------------+
+|        1 | Fiction    |
+|        2 | Mythology  |
+|        3 | History    |
+|        4 | Romance    |
++----------+------------+ 
+
+SELECT * FROM Customers;
++-------------+--------------+----------------------+-----------+------------+
+| customer_id | name         | email                | city      | join_date  |
++-------------+--------------+----------------------+-----------+------------+
+|           1 | Aarav Sharma | aarav@gmail.com      | Mumbai    | 2023-01-10 |
+|           2 | Diya Patel   | diya.p@yahoo.com     | Ahmedabad | 2023-02-15 |
+|           3 | Vihaan Reddy | vihaan.r@outlook.com | Hyderabad | 2023-03-20 |
+|           4 | Ananya Gupta | ananya.g@gmail.com   | Delhi     | 2023-04-05 |
++-------------+--------------+----------------------+-----------+------------+ 
+
+SELECT * FROM Books;
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       1 | Five Point Someone      | 250.00 |             50 |         1 |        1 |
+|       2 | 2 States                | 300.00 |             40 |         1 |        4 |
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       4 | Malgudi Days            | 200.00 |            100 |         3 |        1 |
+|       5 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+ 
+
+SELECT * FROM Orders;
++----------+------------+-------------+
+| order_id | order_date | customer_id |
++----------+------------+-------------+
+|        1 | 2023-05-01 |           1 |
+|        2 | 2023-05-03 |           2 |
+|        3 | 2023-05-05 |           1 |
+|        4 | 2023-06-01 |           3 |
++----------+------------+-------------+ 
+
+SELECT * FROM Order_Details;
++-----------+----------+---------+------------------+------------------------+
+| detail_id | order_id | book_id | quantity_ordered | price_at_time_of_order |
++-----------+----------+---------+------------------+------------------------+
+|         1 |        1 |       1 |                1 |                 250.00 |
+|         2 |        1 |       4 |                2 |                 200.00 |
+|         3 |        2 |       5 |                1 |                 399.00 |
+|         4 |        3 |       2 |                1 |                 300.00 |
+|         5 |        4 |       3 |                1 |                 450.00 |
++-----------+----------+---------+------------------+------------------------+ 
+
+Easy Questions
+---------------
+
+1. Display all books that cost more than 300
+
+query
+-----
+SELECT * 
+FROM Books
+WHERE price > 300;
+
+Explanation
+------------
+SELECT*: SELECT is used to choose data from a table. * means show all columns, so Show every column from the table.
+FROM Books : FROM tells SQL from which table the data should come. Books is the table name, so Take the data from the Books table.
+WHERE price > 300 : WHERE is used to filter rows. price > 300 means only choose books whose price is greater than 300, so Show only books that cost more than 300.
+
+output
+-------
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       5 | The Immortals of Meluha | 399.00 |             60 |         4 |        2 |
++---------+-------------------------+--------+----------------+-----------+----------+
+
+2. Show customers who live in Mumbai
+
+query
+-----
+SELECT * 
+FROM Customers
+WHERE city = 'Mumbai';
+
+Explanation
+------------
+SELECT *: Show all columns.
+FROM Customers : Take data from the Customers table.
+WHERE city = 'Mumbai' : Check the city column. Select only rows where the city is Mumbai.
+
+Output
+-------
++-------------+--------------+-----------------+--------+------------+
+| customer_id | name         | email           | city   | join_date  |
++-------------+--------------+-----------------+--------+------------+
+|           1 | Aarav Sharma | aarav@gmail.com | Mumbai | 2023-01-10 |
++-------------+--------------+-----------------+--------+------------+
+
+3. Display books that belong to genre_id 1
+
+query
+------
+SELECT * 
+FROM Books
+WHERE genre_id = 1;
+
+Explanation
+------------
+SELECT *: Show all columns.
+FROM Books : Use the Books table.
+WHERE genre_id = 1 : Filter rows where genre_id is 1. Genre id 1 represents Fiction.
+
+Output
+------
++---------+-------------------------+--------+----------------+-----------+----------+
+| book_id | title                   | price  | stock_quantity | author_id | genre_id |
++---------+-------------------------+--------+----------------+-----------+----------+
+|       1 | Five Point Someone      | 250.00 |             50 |         1 |        1 |
+|       3 | The God of Small Things | 450.00 |             20 |         2 |        1 |
+|       4 | Malgudi Days            | 200.00 |            100 |         3 |        1 |
++---------+-------------------------+--------+----------------+-----------+----------+
+
+4. Show orders placed after '2023-05-02'
+
+query
+------
+SELECT * 
+FROM Orders
+WHERE order_date > '2023-05-02';
+
+Explanation
+------------
+SELECT *: Show all columns.
+FROM Orders : Take data from the Orders table.
+WHERE order_date > '2023-05-02' : Compare the order dates. Select only orders placed after May 2, 2023.
+
+Output
+-------
++----------+------------+-------------+
+| order_id | order_date | customer_id |
++----------+------------+-------------+
+|        2 | 2023-05-03 |           2 |
+|        3 | 2023-05-05 |           1 |
+|        4 | 2023-06-01 |           3 |
++----------+------------+-------------+ 
+
+
+Medium Questions
+-----------------
+
+1. Find total number of books available in each genre
+
+query
+------
+SELECT genre_id, SUM(stock_quantity) AS total_stock
+FROM Books
+GROUP BY genre_id;
+
+Explanation
+------------
+SELECT genre_id : Show the genre id column
+SUM(stock_quantity) : SUM() adds values together. Here it adds stock quantities.
+Example:
+Fiction books stock:
+50 + 20 + 100 = 170
+Step 3: AS total_stock
+AS gives a new name to the column.
+Here the result column is named total_stock.
+FROM Books : Use data from Books table.
+GROUP BY genre_id : Group rows based on genre_id. SQL calculates total stock separately for each genre.
+
+Output
+-------
++----------+-------------+
+| genre_id | total_stock |
++----------+-------------+
+|        1 |         170 |
+|        2 |          60 |
+|        4 |          40 |
++----------+-------------+
+
+2. Display average price of books written by each author
+
+query
+------
+SELECT author_id, AVG(price) AS average_price
+FROM Books
+GROUP BY author_id;
+
+Explanation
+------------
+SELECT author_id : Show author ids.
+AVG(price) : AVG() calculates average. SQL adds all prices and divides by total books.
+Example:
+For Chetan Bhagat:
+(250 + 300) / 2 = 275
+AS average_price : Rename the result column.
+GROUP BY author_id : Create groups for each author.
+
+Output
+-------
++-----------+---------------+
+| author_id | average_price |
++-----------+---------------+
+|         1 |    275.000000 |
+|         2 |    450.000000 |
+|         3 |    200.000000 |
+|         4 |    399.000000 |
++-----------+---------------+
+
+3. Show customers who placed more than 1 order
+
+query
+-----
+SELECT customer_id, COUNT(order_id) AS total_orders
+FROM Orders
+GROUP BY customer_id
+HAVING COUNT(order_id) > 1;
+
+explanation
+------------
+COUNT(order_id) : COUNT() counts rows. Counts how many orders each customer placed.
+GROUP BY customer_id : Group orders by customer.
+HAVING COUNT(order_id) > 1 : HAVING filters grouped data. Show only customers whose order count is greater than 1.
+
+Output
+-------
++-------------+--------------+
+| customer_id | total_orders |
++-------------+--------------+
+|           1 |            2 |
++-------------+--------------+
+
+4. Display books ordered by price in descending order
+
+query
+------
+SELECT title, price
+FROM Books
+ORDER BY price DESC;
+
+explanation
+------------
+SELECT title, price : Show only title and price columns.
+FROM Books : Use the Books table.
+ORDER BY price DESC : ORDER BY sorts data. DESC means descending order (highest to lowest).
+
+Output
+-------
++-------------------------+--------+
+| title                   | price  |
++-------------------------+--------+
+| The God of Small Things | 450.00 |
+| The Immortals of Meluha | 399.00 |
+| 2 States                | 300.00 |
+| Five Point Someone      | 250.00 |
+| Malgudi Days            | 200.00 |
++-------------------------+--------+
+
+Hard Questions
+---------------
+
+1. Display book titles along with their author names
+
+query
+------
+SELECT Books.title, Authors.author_name
+FROM Books
+JOIN Authors
+ON Books.author_id = Authors.author_id;
+
+explanation
+------------
+SELECT Books.title, Authors.author_name : Choose Book title Author name
+FROM Books : Start with Books table.
+JOIN Authors : Combine Books table with Authors table.
+ON Books.author_id = Authors.author_id : Match rows where author ids are same. This connects each book to its author.
+
+Output
+-------
++-------------------------+----------------+
+| title                   | author_name    |
++-------------------------+----------------+
+| Five Point Someone      | Chetan Bhagat  |
+| 2 States                | Chetan Bhagat  |
+| The God of Small Things | Arundhati Roy  |
+| Malgudi Days            | R.K. Narayan   |
+| The Immortals of Meluha | Amish Tripathi |
++-------------------------+----------------+
+
+2. Show customer names and dates of their orders
+
+query
+------
+SELECT Customers.name, Orders.order_date
+FROM Customers
+JOIN Orders
+ON Customers.customer_id = Orders.customer_id;
+
+explanation
+------------
+SELECT Customers.name, Orders.order_date : show Customer name Order date
+JOIN Orders : Combine Customers and Orders tables.
+ON Customers.customer_id = Orders.customer_id : Match customer ids from both tables.
+
+Output
+-------
++--------------+------------+
+| name         | order_date |
++--------------+------------+
+| Aarav Sharma | 2023-05-01 |
+| Aarav Sharma | 2023-05-05 |
+| Diya Patel   | 2023-05-03 |
+| Vihaan Reddy | 2023-06-01 |
++--------------+------------+
+
+11. Find the most expensive book in the bookstore
+
+query
+------
+SELECT title, price
+FROM Books
+WHERE price = (
+    SELECT MAX(price)
+    FROM Books
+);
+
+explanation
+------------
+Inner Query, 
+SELECT MAX(price) : returns max(price) column
+FROM Books : from books table
+MAX() finds highest price.
+Returns: 450
+Outer Query,
+SELECT title, price : displays title, price columns
+FROM Books : from books table
+WHERE price = 450 : SQL compares prices with highest price.
+
+Output
+-------
++-------------------------+--------+
+| title                   | price  |
++-------------------------+--------+
+| The God of Small Things | 450.00 |
++-------------------------+--------+
+
+12. Display order details with book titles and quantity ordered
+
+query
+------
+SELECT Orders.order_id, Books.title, Order_Details.quantity_ordered
+FROM Order_Details
+JOIN Orders
+ON Order_Details.order_id = Orders.order_id
+JOIN Books
+ON Order_Details.book_id = Books.book_id;
+
+explanation
+------------
+FROM Order_Details : Start with Order_Details table.
+JOIN Orders : Combine with Orders table.
+ON Order_Details.order_id = Orders.order_id : Match order ids.
+JOIN Books : Combine with Books table.
+ON Order_Details.book_id = Books.book_id : Match book ids.
+SELECT : Show, Order id, Book title, Quantity ordered
+
+Output
+-------
++----------+-------------------------+------------------+
+| order_id | title                   | quantity_ordered |
++----------+-------------------------+------------------+
+|        1 | Five Point Someone      |                1 |
+|        1 | Malgudi Days            |                2 |
+|        3 | 2 States                |                1 |
+|        2 | The Immortals of Meluha |                1 |
+|        4 | The God of Small Things |                1 |
++----------+-------------------------+------------------+
